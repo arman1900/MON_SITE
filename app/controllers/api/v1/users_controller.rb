@@ -1,6 +1,6 @@
 class Api::V1::UsersController < ApplicationController
-    before_action :check_token
-    skip_before_action :verify_authenticity_token
+    before_action :correct_user, only: [:update, :destroy]
+    
 
     def index
         users = User.all
@@ -43,14 +43,35 @@ class Api::V1::UsersController < ApplicationController
         end
     end
 
+    def destroy
+        begin
+            user = User.find(params[:id])
+        rescue
+            render json: {errors: "User does not exist"}, status: :error
+        ensure
+            sign_out
+            if user.destroy!
+                render json: {success: "Deleted Successfully"}
+            else
+                render json: {errors: user.errors.full_messages}, status: :error
+            end
+        end
+    end
+
     private
     def user_params
 		params.permit(:username, :email, :password, :password_confirmation)
     end
     
-    def check_token
-        unless Developer.find_by(token: params[:token])
-            render json: {errors: "Incorrect Token"}, status: :error
+    def correct_user
+        unless signed_in?
+            render json: {errors: "Sign in first!"}, status: :error
+        else
+            @user = User.find(params[:id])
+            unless current_user?(@user.id)
+                render json: {errors: "You are not allowed to edit others"}, status: :error
+            end
         end
     end
+    
 end
