@@ -9,7 +9,6 @@ class Api::V1::SessionsController < ApplicationController
         end
     
         if user && user.authenticate(session_params[:password])
-            sign_out
             sign_in user
             #remember user
             render json: user, only: [:username, :id, :email], include: {companies: {only: [:name, :id, :creator_id]}}

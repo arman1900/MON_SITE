@@ -23,6 +23,8 @@ class Api::V1::UsersController < ApplicationController
         user = User.new(user_params)
         puts user_params
         if user.save
+            c = Company.new(name: "#{user.username} Private", creator_id: user.id)
+            user.companies << c
             render json: user, only: [:username, :id, :email] 
           else
             render json: {errors: user.errors.full_messages}, status: :error
@@ -49,7 +51,9 @@ class Api::V1::UsersController < ApplicationController
         rescue
             render json: {errors: "User does not exist"}, status: :error
         ensure
+            Company.where(created_id: user.id).destroy_all
             sign_out
+
             if user.destroy!
                 render json: {success: "Deleted Successfully"}
             else

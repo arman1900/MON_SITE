@@ -12,7 +12,6 @@ class CompanyController < ApplicationController
   end
 
   def destroy
-  
     company = Company.find(params[:id])
     company.destroy! if
     #redirect
