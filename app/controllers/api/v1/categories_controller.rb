@@ -3,11 +3,11 @@ before_action :check, except: [:show]
 before_action :find_category, except: [:create]
 
 def create
-    category = Company.new(name: params[:name], icon_id: params[:icon_id], company_id: @company.id)
-    if category.save
-        render json: category, only[:name, :company_id], include: {posts: {only: [:user_id, :title, :description, :expense]}, icon: {only: [:url]}}
+    @category = Category.new(name: params[:name], icon_id: params[:icon_id], company_id: @company.id)
+    if @category.save
+        render json: @category, only: [:name, :company_id, :icon_id], include: {posts: {except: [:category_id]}}
     else
-        render json: {errors: category.errors.full_messages}, status: :error
+        render json: {errors: @category.errors.full_messages}, status: :error
     end
 end
 
@@ -28,7 +28,7 @@ def update
 end
 
 def show
-    render json: @category, only[:name, :company_id], include: {posts: {only: [:user_id, :title, :description, :expense]}, icon: {only: [:url]}}
+    render json: @category, only: [:name, :company_id, :icon_id], include: {posts: {except: [:category_id]}}
 end
 
 private
@@ -36,8 +36,9 @@ private
 def check
     unless signed_in?
         render json: {errors: "Please Sign in first"}, status: :error
-    elsif @company = Company.find(params[:company_id])
-        if !@company.users.exists?(current_user)
+    end
+    if @company = Company.find(params[:company_id])
+        if !@company.users.exists?(current_user.id)
             render json: {errors: "You are not in the company"}, status: :error
         end
     else
