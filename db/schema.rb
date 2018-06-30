@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_29_230332) do
+ActiveRecord::Schema.define(version: 2018_06_30_074215) do
 
   create_table "categories", force: :cascade do |t|
     t.integer "icon_id"
@@ -68,6 +68,8 @@ ActiveRecord::Schema.define(version: 2018_06_29_230332) do
     t.datetime "activated_at"
     t.string "reset_digest"
     t.string "remember_digest"
+    t.string "provider"
+    t.string "uid"
     t.index ["email"], name: "index_users_on_email"
     t.index ["username"], name: "index_users_on_username"
   end
