@@ -4,6 +4,7 @@ class User < ApplicationRecord
   devise :omniauthable
     has_secure_password 
     has_and_belongs_to_many :companies, class_name: "Company"
+    has_many :posts, dependent: :destroy
 
     attr_accessor :remember_token
     before_save {self.email = email.downcase

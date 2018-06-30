@@ -22,7 +22,9 @@ class Api::V1::CompaniesController < ApplicationController
         rescue
             render json: {errors: "Company does not exist"}, status: :error
         ensure
-            render json: @company, only: [:name, :creator_id, :id], include: {users: {only: [:username, :id, :creator_id]}, categories: {only: [:name, :id]}}
+            if @company
+                 render json: @company, only: [:name, :creator_id, :id], include: {users: {only: [:username, :id, :creator_id]}, categories: {only: [:name, :id]}}
+            end
         end
     end
 
@@ -66,7 +68,7 @@ class Api::V1::CompaniesController < ApplicationController
     end
     
     def all_posts
-        render json: @company, only: [:id, :name], include: {posts:, {except: [:created_at, :updated_at]}}
+        render json: @company.categories.map{ |x| x.posts}
     end
     private
     

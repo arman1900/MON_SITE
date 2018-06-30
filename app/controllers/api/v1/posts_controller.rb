@@ -1,11 +1,11 @@
 class Api::V1::PostsController < ApplicationController
-    before_action :chech
+    before_action :check
     before_action :find_post, except: [:create]
 
     def create
-        post = Post.new(user_id: current_user.id, post_params)
+        post = Post.new(user_id: current_user.id, title: params[:title], description: params[:description], expense: params[:expense], category_id: params[:category_id])
         if post.save
-            render :show
+            render json: post
         else
             render json: {errors: post.errors.full_messages }, status: :error
         end
@@ -13,7 +13,7 @@ class Api::V1::PostsController < ApplicationController
     
     def update
         if @post.update_attributes(post_params)
-            render :show
+            render json: @post
         else
             render json: {errors: post.errors.full_messages }, status: :error
         end
@@ -28,7 +28,7 @@ class Api::V1::PostsController < ApplicationController
     end
 
     def show
-        render json: @post, except: [:created_at, :updated_at]
+        render json: @post
     end
 
     private
@@ -39,8 +39,9 @@ class Api::V1::PostsController < ApplicationController
     def check
         unless signed_in?
             render json: {errors: "Please Sign in first"}, status: :error
-        elsif @category = Category.find(params[:category_id])
-            if !@category.company.users.exists?(current_user)
+        end
+        if @category = Category.find(params[:category_id])
+            if !@category.company.users.exists?(current_user.id)
                 render json: {errors: "You are not in the company"}, status: :error
             end
         else
