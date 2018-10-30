@@ -23,9 +23,7 @@ class Api::V1::UsersController < ApplicationController
         user = User.new(user_params)
         puts user_params
         if user.save
-            c = Company.new(name: "#{user.username} Private", creator_id: user.id)
-            user.companies << c
-            render json: user, only: [:username, :id, :email] 
+            render json: user, only: [:username, :id, :email, :Iin] 
           else
             render json: {errors: user.errors.full_messages}, status: :error
           end
@@ -64,7 +62,7 @@ class Api::V1::UsersController < ApplicationController
 
     private
     def user_params
-		params.permit(:username, :email, :password, :password_confirmation)
+        params.permit(:username,:Iin,:email, :password, :password_confirmation)
     end
     
     def correct_user

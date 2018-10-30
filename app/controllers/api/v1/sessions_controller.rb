@@ -2,16 +2,11 @@ class Api::V1::SessionsController < ApplicationController
     
     def create
         login = session_params[:login]
-        if login.include? "@"
-            user=User.find_by_email(login) 
-        else 
-            user=User.find_by_username(login)
-        end
-    
+            user=User.find_by_email(login)
         if user && user.authenticate(session_params[:password])
             sign_in user
             #remember user
-            render json: user, only: [:username, :id, :email], include: {companies: {only: [:name, :id, :creator_id]}}
+            render json: user, only: [:username, :id, :email, :Iin] 
         else
             render json: {errors: "Invalid username, email or password"}, status: :error
         end
@@ -24,7 +19,7 @@ class Api::V1::SessionsController < ApplicationController
     
     def show
         if current_user
-            render json: current_user, only: [:username, :id, :email], include: {companies: {only: [:name, :id, :creator_id]}}
+            render json: current_user, only: [:username, :id, :email, :Iin]
         else
             render json: {errors: "Not Signed In"}, status: :error
         end

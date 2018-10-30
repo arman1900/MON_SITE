@@ -1,0 +1,2 @@
+class LockedTime < ApplicationRecord
+end

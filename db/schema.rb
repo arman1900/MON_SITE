@@ -10,29 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_30_074215) do
-
-  create_table "categories", force: :cascade do |t|
-    t.integer "icon_id"
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "company_id"
-  end
-
-  create_table "companies", force: :cascade do |t|
-    t.string "name"
-    t.integer "creator_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "companies_users", id: false, force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "company_id"
-    t.index ["company_id"], name: "index_companies_users_on_company_id"
-    t.index ["user_id"], name: "index_companies_users_on_user_id"
-  end
+ActiveRecord::Schema.define(version: 2018_10_30_133420) do
 
   create_table "developers", force: :cascade do |t|
     t.string "token"
@@ -41,18 +19,45 @@ ActiveRecord::Schema.define(version: 2018_06_30_074215) do
     t.index ["token"], name: "index_developers_on_token", unique: true
   end
 
-  create_table "icons", force: :cascade do |t|
-    t.string "url"
+  create_table "doctors", force: :cascade do |t|
+    t.string "username"
+    t.string "email"
+    t.string "password_digest"
+    t.time "start_time"
+    t.time "end_time"
+    t.integer "hospital_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "posts", force: :cascade do |t|
+  create_table "doctors_services", id: false, force: :cascade do |t|
+    t.integer "doctor_id"
+    t.integer "service_id"
+    t.index ["doctor_id"], name: "index_doctors_services_on_doctor_id"
+    t.index ["service_id"], name: "index_doctors_services_on_service_id"
+  end
+
+  create_table "hospitals", force: :cascade do |t|
+    t.string "name"
+    t.string "location"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "locked_times", force: :cascade do |t|
+    t.datetime "start_time"
+    t.datetime "end_time"
     t.integer "user_id"
-    t.integer "category_id"
-    t.string "title"
-    t.text "description"
-    t.float "expense"
+    t.integer "doctor_id"
+    t.integer "service_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["start_time", "doctor_id"], name: "index_locked_times_on_start_time_and_doctor_id", unique: true
+    t.index ["start_time", "user_id"], name: "index_locked_times_on_start_time_and_user_id", unique: true
+  end
+
+  create_table "services", force: :cascade do |t|
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -68,8 +73,7 @@ ActiveRecord::Schema.define(version: 2018_06_30_074215) do
     t.datetime "activated_at"
     t.string "reset_digest"
     t.string "remember_digest"
-    t.string "provider"
-    t.string "uid"
+    t.string "Iin"
     t.index ["email"], name: "index_users_on_email"
     t.index ["username"], name: "index_users_on_username"
   end
