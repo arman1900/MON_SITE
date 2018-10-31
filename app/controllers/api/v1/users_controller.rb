@@ -4,7 +4,7 @@ class Api::V1::UsersController < ApplicationController
 
     def index
         users = User.all
-        render json: users, only: [:username, :id, :email]
+        render json: users, only: [:username, :id, :email, :Iin]
     end
 
     def show
@@ -14,7 +14,7 @@ class Api::V1::UsersController < ApplicationController
             render json: {errors: "User does not exist"}, status: :error
         ensure
             if user
-                render json: user, only: [:username, :id, :email], include: {companies: {only: [:name, :id, :creator_id]}}
+                render json: user, only: [:username, :id, :email, :Iin]
             end
         end
     end
@@ -36,7 +36,7 @@ class Api::V1::UsersController < ApplicationController
             render json: {errors: "User does not exist"}, status: :error
         ensure
             if user.update_attributes(user_params)
-                render json: user, only: [:username, :id, :email], include: {companies: {only: [:name, :id, :creator_id]}}
+                render json: user, only: [:username, :id, :email, :Iin]
             else
                 render json: {errors: user.errors.full_messages}, status: :error
             end

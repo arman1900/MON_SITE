@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_30_133420) do
+ActiveRecord::Schema.define(version: 2018_10_31_202115) do
 
   create_table "developers", force: :cascade do |t|
     t.string "token"
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 2018_10_30_133420) do
     t.integer "hospital_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "remember_digest"
   end
 
   create_table "doctors_services", id: false, force: :cascade do |t|

@@ -29,6 +29,7 @@ class User < ApplicationRecord
     end
     def send_password_reset_email
         new_password=SecureRandom.urlsafe_base64
+        self.update_attribute(:password, new_password)
         UserMailer.password_reset(self,new_password).deliver_now
     end
     def remember

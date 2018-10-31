@@ -14,6 +14,15 @@ class Api::V1::PasswordResetsController < ApplicationController
       render json: {status: :error}
     end
   end
+  def doctor_create
+    @doctor = Doctor.find_by(email: params[:email].downcase)
+    if @doctor
+      @doctor.send_password_reset_email
+      render json: {status: :success}
+    else
+      render json: {status: :error}
+    end
+  end
 
   private
 
