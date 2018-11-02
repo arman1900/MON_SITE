@@ -19,6 +19,8 @@ Rails.application.routes.draw do
       get "/:token/hospitals", to: "hospitals#index"
       post "/:token/hospitals", to: "hospitals#create"
       get "/:token/hospital/:id", to: "hospitals#show"
+      get "/:token/services", to: "services#index"
+      get "/:token/service/:id", to: "services#show"
     end
   end
 
