@@ -3,7 +3,7 @@ class Doctor < ApplicationRecord
     belongs_to :hospital
     has_many :locked_times, dependent: :destroy
     has_many :users, through: :locked_times
-    has_many :services
+    has_and_belongs_to_many :services
     attr_accessor :remember_token
     before_save {self.email = email.downcase
         self.username = username.camelize}
