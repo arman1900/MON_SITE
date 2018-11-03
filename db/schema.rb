@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_02_164236) do
+ActiveRecord::Schema.define(version: 2018_11_03_171229) do
 
   create_table "developers", force: :cascade do |t|
     t.string "token"
@@ -51,10 +51,11 @@ ActiveRecord::Schema.define(version: 2018_11_02_164236) do
     t.integer "user_id"
     t.integer "doctor_id"
     t.integer "service_id"
+    t.boolean "accepted"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["start_time", "doctor_id"], name: "index_locked_times_on_start_time_and_doctor_id", unique: true
-    t.index ["start_time", "user_id"], name: "index_locked_times_on_start_time_and_user_id", unique: true
+    t.integer "hospital_id"
+    t.index ["start_time", "user_id", "doctor_id"], name: "index_locked_times_on_start_time_and_user_id_and_doctor_id", unique: true
   end
 
   create_table "services", force: :cascade do |t|

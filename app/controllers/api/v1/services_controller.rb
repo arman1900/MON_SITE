@@ -11,15 +11,7 @@ class Api::V1::ServicesController < ApplicationController
             render json: {errors: "Service does not exist!"}, status: :error
         ensure
             if service
-                hospital_ids = []
-                service.doctors.each do |doctor|
-                    hospital_ids.append(doctor.hospital_id)
-                    
-                end
-                hospital_ids = hospital_ids.uniq
-                hospitals = Hospital.find(hospital_ids)
-                ser_hash = {service: { id: service.id, name: service.name, hospitals: hospitals}}
-                render json: ser_hash
+                render json: service, only: [:id, :name], include: { hospitals: {only: [:name, :location]}}
             end
         end
     end

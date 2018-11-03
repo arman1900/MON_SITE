@@ -1,10 +1,14 @@
 class Api::V1::DoctorsController < ApplicationController
+    before_action :correct_user, only: [:update, :destroy]
     def index
         doctors = Doctor.all
         render json: doctor, only: [:username, :id, :email,:hospital_id], include: {hospital: {only: [:location, :id, :name]}}
     end
     
-
+    def show_locked_times
+        locked_times = current_doctor.locked_times
+        render json: locked_times, only: [:start_time, :end_time, :user_id, :service_id, :accepted]
+    end
     def show
         begin
             doctor = Doctor.find(params[:id])

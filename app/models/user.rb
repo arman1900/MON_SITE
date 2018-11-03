@@ -1,5 +1,9 @@
 class User < ApplicationRecord
     has_secure_password
+    
+    has_many :locked_times, dependent: :destroy
+
+
     attr_accessor :remember_token
     before_save {self.email = email.downcase
         self.username = username.camelize}

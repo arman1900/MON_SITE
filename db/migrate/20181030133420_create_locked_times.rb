@@ -6,10 +6,9 @@ class CreateLockedTimes < ActiveRecord::Migration[5.2]
       t.integer :user_id
       t.integer :doctor_id
       t.integer :service_id
-      
+      t.boolean :accepted
       t.timestamps
     end
-    add_index :locked_times, [:start_time, :user_id], unique: true
-    add_index :locked_times, [:start_time, :doctor_id], unique: true
+    add_index :locked_times, [:start_time, :user_id, :doctor_id], unique: true
   end
 end
