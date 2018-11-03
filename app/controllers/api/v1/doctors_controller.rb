@@ -7,7 +7,16 @@ class Api::V1::DoctorsController < ApplicationController
     
     def show_locked_times
         locked_times = current_doctor.locked_times
-        render json: locked_times, only: [:start_time, :end_time, :user_id, :service_id, :accepted]
+        render json: locked_times, only: [:id,:start_time, :end_time, :user_id, :service_id, :accepted]
+    end
+    def accept_time
+        locked_time = LockedTime.find(params[:id])
+        if locked_time && locked_time.accepted == false
+            locked_time.update_attribute(:accepted,true)
+            render json: locked_time, only: [:accepted]
+        else
+            render json: {error: "There is no such request or you've already accepted it"}, status: :error
+        end
     end
     def show
         begin

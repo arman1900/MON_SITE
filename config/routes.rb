@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       get "/:token/service/:id", to: "services#show"
       post "/:token/lock_time", to: "users#create_locked_time"
       get "/:token/doctor_lock_times", to: "doctors#show_locked_times"
+      get "/:token/accept_request/:id", to: "doctors#accept_time" 
     end
   end
 
