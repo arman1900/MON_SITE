@@ -1,33 +1,52 @@
 module Api::V1::SessionsHelper
 
+
+    def delete_past_time(user_doctor)
+        user_doctor.locked_times.each do |ltime|
+            if ltime.end_time < DateTime.now
+                ltime.destroy!
+            end
+        end
+    end
+    
     def sign_in(user)
         session[:user_id] = user.id
+        delete_past_time(user)
     end
+    
     def doctor_sign_in(doctor)
         session[:doctor_id] = doctor.id
+        delete_past_time(doctor)
     end
+    
     def signed_in?
         !current_user.nil?
     end
+    
     def doctor_signed_in?
         !current_doctor.nil?
     end
+    
     def remember(user)
         user.remember
         cookies.permanent.signed[:user_id] = user.id
         cookies.permanent[:remember_token] = user.remember_token
     end
+    
     def doctor_remember(doctor)
         doctor.remember
         cookies.permanent.signed[:doctor_id] = doctor.id
         cookies.permanent[:remember_token] = doctor.remember_token
     end
+    
     def current_user?(user_id)
         current_user.id == user_id if current_user
     end
+    
     def current_doctor?(doctor_id)
         current_doctor.id == doctor_id if current_doctor
     end
+    
     def current_user
         if user_id = session[:user_id]
             @current_user ||= User.find(user_id)
@@ -41,6 +60,7 @@ module Api::V1::SessionsHelper
             @current_user
         end
     end
+    
     def current_doctor
         if doctor_id = session[:doctor_id]
             @current_doctor ||= Doctor.find(doctor_id)
@@ -60,6 +80,7 @@ module Api::V1::SessionsHelper
         cookies.delete(:user_id)
         cookies.delete(:remember_token)
     end
+    
     def doctor_forget (doctor)
         doctor.forget
         cookies.delete(:doctor_id)

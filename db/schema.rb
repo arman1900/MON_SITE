@@ -51,7 +51,7 @@ ActiveRecord::Schema.define(version: 2018_11_03_171229) do
     t.integer "user_id"
     t.integer "doctor_id"
     t.integer "service_id"
-    t.boolean "accepted"
+    t.boolean "accepted", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "hospital_id"

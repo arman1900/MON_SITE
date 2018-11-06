@@ -1,38 +1,85 @@
 class Api::V1::UsersController < ApplicationController
-    before_action :correct_user, only: [:update, :destroy]
-    before_action :correct_time, only: [:create_locked_time]
-
+    before_action :correct_user, only: [:update, :destroy, :show_locked_times, :destroy_locked_time]
+    before_action :correct_time, only: [:create_locked_time_all]
+    before_action :correct_time, only: [:create_locked_time_doctor]
+    
     def index
         users = User.all
         render json: users, only: [:username, :id, :email, :Iin]
     end
 
+    def show_locked_times
+        locked_times = @user.locked_times
+        render json: locked_times, only: [:id,:start_time, :end_time, :user_id, :service_id, :accepted]
+    end
 
-    def create_locked_time
-        hospital = Hospital.find(params[:hospital_id])
+    def destroy_locked_time
+        user = current_user
+        locked_time = LockedTime.find(params[:id])
+        if user && locked_time && locked_time.user_id == user.id
+            locked_time.destroy! 
+        else
+            render json: {errors: "User is not signed in or Locked time do not exist or User is not allowed to delete this locked time"}, status: :error
+        end
+    end
+
+    def create_locked_time_all
+        user = current_user
+        if user
+            hospital = Hospital.find(params[:hospital_id])
+            begin
+                service = Service.find(params[:service_id])
+            rescue
+                render json: {errors: "There is no such service"}, status: :error
+            end
+            ltime_errors = []
+            hospital.doctors.each do |doctor|
+                if(doctor.is_serves(service))
+                    cur_params = {
+                        start_time: @start_time,
+                        end_time: @end_time,
+                        service_id: params[:service_id],
+                        doctor_id: doctor.id,
+                        user_id: user.id,
+                        hospital_id: params[:hospital_id]
+                    }
+                    ltime = LockedTime.new(cur_params)
+                    unless ltime.save
+                        ltime_errors.append(ltime.errors.full_messages)
+                    end
+                end
+            end
+            render json: {errors: ltime_errors}, status: :error
+        else
+            render json: {errors: "User is not signed in"}, status: :error
+        end
+    end
+
+    def create_locked_time_doctor
+        doctor = Doctor.find(params[:doctor_id])
         begin
             service = Service.find(params[:service_id])
         rescue
             render json: {errors: "There is no such service"}, status: :error
         end
-        ltime_errors = []
-        hospital.doctors.each do |doctor|
-            if(doctor.is_serves(service))
-                cur_params = {
-                    start_time: @start_time,
-                    end_time: @end_time,
-                    service_id: params[:service_id],
-                    doctor_id: doctor.id,
-                    user_id: current_user.id,
-                    hospital_id: params[:hospital_id]
-                }
-                ltime = LockedTime.new(cur_params)
-                unless ltime.save
-                    ltime_errors.append(ltime.errors.full_messages)
-                end
+        if(doctor.is_serves(service))
+            cur_params = {
+                start_time: @start_time,
+                end_time: @end_time,
+                service_id: params[:service_id],
+                doctor_id: doctor.id,
+                user_id: current_user.id,
+                hospital_id: doctor.hospital.id
+            }
+            ltime = LockedTime.new(cur_params)
+            unless ltime.save
+                render json: {errors: ltime.errors.full_messages}, status: :error
+            else
+                render json: ltime, status: :success
             end
+        else
+            render json: {error: "Something is wrong!"}, status: :error
         end
-        render json: {errors: ltime_errors}, status: :error
     end
 
 
